@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Calidad App – Proyecto ACA</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<header>
+  <h1>Calidad App</h1>
+  <nav>
+    <a href="#inicio">Inicio</a>
+    <a href="#normas">Normas</a>
+    <a href="#modelos">Modelos</a>
+    <a href="#estandares">Estándares</a>
+    <a href="#codigo">Código y programación</a>
+    <a href="#pruebas">Pruebas y evaluación</a>
+    <a href="#conclusiones">Conclusiones</a>
+    <a href="#recomendaciones">Recomendaciones</a>
+    <a href="#video">Video</a>
+  </nav>
+</header>
+
+<main>
+<section id="inicio">
+  <h2>Propósito del aplicativo</h2>
+  <p>Esta app demuestra ingeniería web con frontend público, backend mínimo y BD NoSQL (LowDB), integrando un modelo 0–5 con pesos y simulación PUB/SUB.</p>
+
+  <h3>Objetivo general</h3>
+  <p>Implementar un prototipo funcional que evidencie conceptos clave de arquitectura web, persistencia NoSQL, patrón PUB/SUB y despliegue web.</p>
+
+  <h3>Objetivos específicos</h3>
+  <ul>
+    <li>Construir frontend público y responsivo.</li>
+    <li>Exponer API REST mínima con almacenamiento NoSQL (JSON).</li>
+    <li>Modelar y calcular un índice 0–5 con pesos.</li>
+    <li>Documentar arquitectura, PUB/SUB y contenedores/nube.</li>
+    <li>Ejecutar 6 casos de prueba con evidencias.</li>
+  </ul>
+
+  <h3>Nombre de la app</h3>
+  <p><strong>Calidad App</strong></p>
+</section>
+
+<section id="arquitectura">
+  <h2>Arquitectura (Frontend + Backend + BD NoSQL)</h2>
+  <p>Frontend estático (GitHub Pages) + Backend Express (Replit) + BD NoSQL (LowDB/JSON). Comunicación por REST (fetch).</p>
+  <ul>
+    <li><strong>Frontend:</strong> HTML/CSS/JS, público.</li>
+    <li><strong>Backend:</strong> Node/Express con endpoints <code>/api/items</code>.</li>
+    <li><strong>NoSQL:</strong> LowDB sobre archivo <code>db.json</code>.</li>
+  </ul>
+</section>
+
+<section id="mockups">
+  <h2>Mockups / Prototipos</h2>
+  <ol>
+    <li>Pantalla Inicio (navegación + resumen).</li>
+    <li>Modelo 0–5 (formulario con pesos y cálculo).</li>
+    <li>Listado de ítems desde API (prueba de integración).</li>
+  </ol>
+  <p><em>Adjuntar capturas de Excalidraw.</em></p>
+</section>
+
+<section id="pubsub">
+  <h2>PUB/SUB (concepto + diagrama + demo)</h2>
+  <p>Usamos un EventBus simple en el frontend: los productores “publican” eventos y los consumidores se “suscriben”.</p>
+  <pre><code>// En app.js: window.bus.publish('evento', data); window.bus.subscribe('evento', cb);
+</code></pre>
+  <p><em>Incluye diagrama de tópicos/productores/suscriptores.</em></p>
+  <button id="btn-publish">Publicar evento de ejemplo</button>
+  <div id="pubsub-log" class="card"></div>
+</section>
+
+<section id="contenedores">
+  <h2>Contenedores y nube</h2>
+  <p>Se propone Dockerizar el backend (imagen Node) y desplegarlo en un servicio gestionado. Para el prototipo, se muestra el diseño (diagrama) y la receta Docker.</p>
+  <pre><code># Dockerfile (backend)
+FROM node:20-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --omit=dev
+COPY . .
+EXPOSE 3000
+CMD ["node", "index.js"]
+</code></pre>
+  <p><em>Adjuntar diagrama: Dev → Docker → Cloud (puerto 3000) → Frontend llama /api.</em></p>
+</section>
+
+<section id="modelos">
+  <h2>Modelos y fórmula 0–5 (con pesos)</h2>
+  <form id="score-form">
+    <div class="grid">
+      <div><label>Criterio 1 (0–5)</label><input type="number" step="0.1" min="0" max="5" id="c1" value="4.0"></div>
+      <div><label>Peso 1</label><input type="number" step="0.1" id="p1" value="1"></div>
+
+      <div><label>Criterio 2</label><input type="number" step="0.1" min="0" max="5" id="c2" value="3.5"></div>
+      <div><label>Peso 2</label><input type="number" step="0.1" id="p2" value="1"></div>
+
+      <div><label>Criterio 3</label><input type="number" step="0.1" min="0" max="5" id="c3" value="4.5"></div>
+      <div><label>Peso 3</label><input type="number" step="0.1" id="p3" value="1"></div>
+
+      <div><label>Criterio 4</label><input type="number" step="0.1" min="0" max="5" id="c4" value="4.0"></div>
+      <div><label>Peso 4</label><input type="number" step="0.1" id="p4" value="1"></div>
+
+      <div><label>Criterio 5</label><input type="number" step="0.1" min="0" max="5" id="c5" value="3.0"></div>
+      <div><label>Peso 5</label><input type="number" step="0.1" id="p5" value="1"></div>
+    </div>
+    <button type="submit">Calcular</button>
+  </form>
+  <p id="score-out"></p>
+  <p><small>Fórmula: Σ(peso_i*valor_i) / Σ(peso_i) → escala 0–5</small></p>
+</section>
+
+<section id="codigo">
+  <h2>Código y programación (API + listado)</h2>
+  <button id="btn-load">Cargar ítems desde API</button>
+  <ul id="items"></ul>
+
+  <h3>Crear ítem de ejemplo</h3>
+  <form id="create-form">
+    <input id="new-name" placeholder="Nombre" required />
+    <button>Crear</button>
+  </form>
+  <p><small>Endpoint backend: <code>GET/POST /api/items</code></small></p>
+</section>
+
+<section id="estandares">
+  <h2>Estándares</h2>
+  <ul>
+    <li>RESTful en endpoints.</li>
+    <li>Buenas prácticas HTML5/semántica.</li>
+    <li>JSON como intercambio de datos.</li>
+  </ul>
+</section>
+
+<section id="pruebas">
+  <h2>Pruebas y evaluación</h2>
+  <ol id="test-plan">
+    <li>Front carga en público (GitHub Pages) ✔</li>
+    <li>Cálculo modelo 0–5 con distintos pesos ✔</li>
+    <li>GET /api/items muestra lista ✔</li>
+    <li>POST /api/items crea ítem ✔</li>
+    <li>PUB/SUB dispara evento y actualiza UI ✔</li>
+    <li>Responsivo en móvil ✔</li>
+  </ol>
+  <p><em>Adjuntar 6 capturas</em>.</p>
+</section>
+
+<section id="conclusiones">
+  <h2>Conclusiones</h2>
+  <ul>
+    <li>Se evidenció integración FE/BE/NoSQL con patrón de eventos.</li>
+    <li>El modelo 0–5 permite evaluar calidad de forma ponderada.</li>
+  </ul>
+</section>
+
+<section id="recomendaciones">
+  <h2>Recomendaciones</h2>
+  <ul>
+    <li>Dockerizar backend y desplegarlo de forma gestionada.</li>
+    <li>Añadir autenticación y roles.</li>
+  </ul>
+</section>
+
+<section id="video">
+  <h2>Video (≤4 min)</h2>
+  <p>Guion al final de esta guía. Inserta el link cuando lo subas.</p>
+</section>
+
+<section id="referencias">
+  <h2>Referencias</h2>
+  <ol>
+    <li>Guía del ACA (Ingeniería Web – CUN). (2025). <em>Proyecto de Aula Entrega Final</em>. [Documento de la asignatura].</li>
+  </ol>
+</section>
+</main>
+
+<footer><small>© 2025 Calidad App</small></footer>
+<script src="app.js"></script>
+</body>
+</html>
